@@ -1,0 +1,25 @@
+from dotenv import load_dotenv
+import os
+import google.generativeai as genai
+
+load_dotenv()  # loads variables from .env
+
+api_key = os.getenv("GOOGLE_API_KEY")
+if not api_key:
+    raise RuntimeError("GOOGLE_API_KEY not found in environment variables")
+
+genai.configure(api_key=api_key)
+
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+def voice_assistant(input_user):
+    prompt = f"""
+    You are an AI assistant in an engaging conversation with a user. The user just asked the following question:
+    '{input_user}'
+    Provide a direct and informative answer, focusing on the exact details the user is asking for. Avoid unnecessary elaboration or asking follow-up questions unless essential to the user’s inquiry. Keep the response clear, concise, and to the point. If the topic is complex, briefly summarize the key aspects.
+    """
+    response = model.generate_content(prompt).text
+    return response
+
+input_user = input("start conversation: ")
+print(voice_assistant(input_user))
